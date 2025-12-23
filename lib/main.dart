@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'pages/timeline_page.dart';
 import 'pages/events_page.dart';
 import 'pages/library_page.dart';
 import 'widgets/floating_action_widget.dart';
+import 'services/audio_recorder_service.dart';
+import 'providers/timeline_provider.dart';
 
 void main() {
-  runApp(const PrismaNoteApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AudioRecorderService()),
+        ChangeNotifierProvider(create: (_) => TimelineProvider()),
+      ],
+      child: const PrismaNoteApp(),
+    ),
+  );
 }
 
 class PrismaNoteApp extends StatelessWidget {

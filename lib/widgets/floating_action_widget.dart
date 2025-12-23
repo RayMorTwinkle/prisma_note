@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../services/audio_recorder_service.dart';
+import '../providers/timeline_provider.dart';
+import 'sound_wave_visualizer.dart';
 
 class FloatingActionWidget extends StatefulWidget {
   const FloatingActionWidget({super.key});
@@ -13,6 +17,10 @@ class _FloatingActionWidgetState extends State<FloatingActionWidget>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _pulseAnimation;
+  
+  // Recording state
+  bool _isRecording = false;
+  bool _hasPermission = false;
 
   @override
   void initState() {
@@ -37,6 +45,15 @@ class _FloatingActionWidgetState extends State<FloatingActionWidget>
     ));
     
     _animationController.repeat(reverse: true);
+    _checkPermission();
+  }
+
+  Future<void> _checkPermission() async {
+    final audioService = Provider.of<AudioRecorderService>(context, listen: false);
+    final hasPermission = await audioService.requestMicrophonePermission();
+    setState(() {
+      _hasPermission = hasPermission;
+    });
   }
 
   @override
@@ -46,6 +63,11 @@ class _FloatingActionWidgetState extends State<FloatingActionWidget>
   }
 
   void _onTapToType() {
+    if (_isRecording) {
+      _stopRecording();
+      return;
+    }
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -57,16 +79,96 @@ class _FloatingActionWidgetState extends State<FloatingActionWidget>
     );
   }
 
-  void _onLongPressToRecord() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Voice recording feature coming soon!',
-          style: GoogleFonts.inter(),
-        ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.black,
-        behavior: SnackBarBehavior.floating,
+  Future<void> _onLongPressToRecord() async {
+    if (_isRecording) return;
+    
+    final audioService = Provider.of<AudioRecorderService>(context, listen: false);
+    
+    setState(() {});
+
+    // Start recording
+    final success = await audioService.startRecording();
+    
+    if (mounted) {
+      if (success) {
+        setState(() {
+          _isRecording = true;
+        });
+        
+        // Show recording overlay
+        _showRecordingOverlay();
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _hasPermission ? 'Failed to start recording' : 'Microphone permission required',
+              style: GoogleFonts.inter(),
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    if (!_isRecording) return;
+    
+    final audioService = Provider.of<AudioRecorderService>(context, listen: false);
+    
+    // Stop recording
+    final filePath = await audioService.stopRecording();
+    
+    // Update state immediately
+    setState(() {
+      _isRecording = false;
+    });
+    
+    // Hide recording overlay
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+    
+    // Add to timeline if recording was successful
+    if (filePath != null && mounted) {
+      final timelineProvider = Provider.of<TimelineProvider>(context, listen: false);
+      timelineProvider.addAudioRecording(filePath);
+      
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Voice memo saved!',
+              style: GoogleFonts.inter(),
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _onLongPressEnd() async {
+    // No longer needed - recording stops on tap
+  }
+
+  void _showRecordingOverlay() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => RecordingOverlay(
+        amplitudeStream: Provider.of<AudioRecorderService>(context, listen: false).amplitudeStream,
+        onCancel: () {
+          if (!mounted) return;
+          
+          _stopRecording();
+        },
       ),
     );
   }
@@ -76,6 +178,7 @@ class _FloatingActionWidgetState extends State<FloatingActionWidget>
     return GestureDetector(
       onTap: _onTapToType,
       onLongPress: _onLongPressToRecord,
+      onLongPressEnd: (_) => _onLongPressEnd(),
       child: AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {
@@ -256,6 +359,140 @@ class _QuickInputSheetState extends State<QuickInputSheet> {
           ),
           const SizedBox(height: 8),
         ],
+      ),
+    );
+  }
+}
+
+class RecordingOverlay extends StatefulWidget {
+  final VoidCallback onCancel;
+  final Stream<double>? amplitudeStream;
+
+  const RecordingOverlay({
+    super.key,
+    required this.onCancel,
+    this.amplitudeStream,
+  });
+
+  @override
+  State<RecordingOverlay> createState() => _RecordingOverlayState();
+}
+
+class _RecordingOverlayState extends State<RecordingOverlay>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _pulseController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: GestureDetector(
+        onTap: widget.onCancel,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedBuilder(
+                animation: _pulseAnimation,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: _pulseAnimation.value,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.mic,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Recording...',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SoundWaveVisualizer(
+                isActive: true,
+                amplitudeStream: widget.amplitudeStream,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Tap to stop',
+                style: GoogleFonts.inter(
+                  color: Colors.grey[400],
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: widget.onCancel,
+                icon: const Icon(Icons.stop, size: 20),
+                label: Text(
+                  'Cancel',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[800],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
