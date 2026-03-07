@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prisma_note/models/contact.dart';
+import '../models/contact.dart';
+import '../widgets/sheets/tasks_year_view_sheet.dart';
+import '../widgets/sheets/contacts_list_sheet.dart';
+import '../constants/app_colors.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -66,11 +69,10 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // Header
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -79,13 +81,12 @@ class _LibraryPageState extends State<LibraryPage> {
                   style: GoogleFonts.inter(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: AppColors.primary,
                   ),
                 ),
               ),
             ),
             
-            // Tasks Section
             SliverToBoxAdapter(
               child: _buildSectionHeader('Tasks'),
             ),
@@ -107,7 +108,6 @@ class _LibraryPageState extends State<LibraryPage> {
               ]),
             ),
             
-            // Contacts Section
             SliverToBoxAdapter(
               child: _buildSectionHeader('Contacts'),
             ),
@@ -134,7 +134,6 @@ class _LibraryPageState extends State<LibraryPage> {
               ]),
             ),
             
-            // Memos Section
             SliverToBoxAdapter(
               child: _buildSectionHeader('Memos'),
             ),
@@ -161,7 +160,6 @@ class _LibraryPageState extends State<LibraryPage> {
               ]),
             ),
             
-            // Health Section
             SliverToBoxAdapter(
               child: _buildSectionHeader('Health'),
             ),
@@ -188,7 +186,6 @@ class _LibraryPageState extends State<LibraryPage> {
               ]),
             ),
             
-            // Additional spacing at bottom
             const SliverToBoxAdapter(
               child: SizedBox(height: 32),
             ),
@@ -206,7 +203,7 @@ class _LibraryPageState extends State<LibraryPage> {
         style: GoogleFonts.inter(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Colors.black,
+          color: AppColors.primary,
         ),
       ),
     );
@@ -233,13 +230,13 @@ class _LibraryPageState extends State<LibraryPage> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppColors.grey100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     icon,
                     size: 20,
-                    color: Colors.grey[700],
+                    color: AppColors.grey700,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -252,7 +249,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -260,7 +257,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         subtitle,
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: Colors.grey[600],
+                          color: AppColors.grey600,
                         ),
                       ),
                     ],
@@ -269,7 +266,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: Colors.grey[400],
+                  color: AppColors.grey400,
                 ),
               ],
             ),
@@ -295,13 +292,13 @@ class _LibraryPageState extends State<LibraryPage> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppColors.grey100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.calendar_today,
                     size: 20,
-                    color: Colors.grey[700],
+                    color: AppColors.grey700,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -314,7 +311,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -322,7 +319,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         '2024 Overview & Planning',
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: Colors.grey[600],
+                          color: AppColors.grey600,
                         ),
                       ),
                     ],
@@ -334,7 +331,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -342,7 +339,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                      color: AppColors.onPrimary,
                     ),
                   ),
                 ),
@@ -350,7 +347,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: Colors.grey[400],
+                  color: AppColors.grey400,
                 ),
               ],
             ),
@@ -369,7 +366,7 @@ class _LibraryPageState extends State<LibraryPage> {
       SnackBar(
         content: Text('$feature feature coming soon!'),
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -379,7 +376,7 @@ class _LibraryPageState extends State<LibraryPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -391,7 +388,7 @@ class _LibraryPageState extends State<LibraryPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -404,303 +401,13 @@ class _LibraryPageState extends State<LibraryPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => ContactsListSheet(
         contacts: filteredContacts,
         title: type.displayName,
-      ),
-    );
-  }
-}
-
-class TasksYearViewSheet extends StatelessWidget {
-  const TasksYearViewSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.5,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) {
-        return SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  '2024 Tasks Overview',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Annual planning and goal tracking',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 32),
-                
-                // Mock chart visualization
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.bar_chart,
-                          size: 48,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Tasks Chart Visualization',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Coming in next update',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class ContactsListSheet extends StatelessWidget {
-  final List<Contact> contacts;
-  final String? title;
-
-  const ContactsListSheet({
-    super.key,
-    required this.contacts,
-    this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.8,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (context, scrollController) {
-        return SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  title ?? 'All Contacts',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${contacts.length} contacts',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                
-                ...contacts.map((contact) => _buildContactCard(context, contact)),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildContactCard(BuildContext context, Contact contact) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey[200],
-                  child: Text(
-                    contact.name.isNotEmpty ? contact.name[0].toUpperCase() : '?',
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        contact.name,
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        contact.type.displayName,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    contact.type.displayName,
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
-            if (contact.email != null || contact.phone != null) ...[
-              const SizedBox(height: 12),
-              if (contact.email != null)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.email,
-                      size: 14,
-                      color: Colors.grey[500],
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      contact.email!,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              if (contact.phone != null) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      size: 14,
-                      color: Colors.grey[500],
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      contact.phone!,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ],
-            
-            if (contact.tags.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: contact.tags.take(3).map((tag) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      tag,
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

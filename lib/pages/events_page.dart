@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prisma_note/models/event_project.dart';
-import 'package:prisma_note/widgets/project_card.dart';
+import '../models/event_project.dart';
+import '../widgets/project_grid.dart';
+import '../constants/app_colors.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -112,12 +113,11 @@ class _EventsPageState extends State<EventsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
@@ -125,19 +125,18 @@ class _EventsPageState extends State<EventsPage>
                 style: GoogleFonts.inter(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: AppColors.primary,
                 ),
               ),
             ),
             
-            // Tab Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: TabBar(
                 controller: _tabController,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey[600],
-                indicatorColor: Colors.black,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.grey600,
+                indicatorColor: AppColors.primary,
                 indicatorWeight: 2,
                 labelStyle: GoogleFonts.inter(
                   fontSize: 14,
@@ -156,27 +155,22 @@ class _EventsPageState extends State<EventsPage>
               ),
             ),
             
-            // Tab Content
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // In Progress
                   ProjectGrid(
                     projects: _getFilteredProjects(ProjectStatus.inProgress),
                   ),
                   
-                  // Backlog
                   ProjectGrid(
                     projects: _getFilteredProjects(ProjectStatus.backlog),
                   ),
                   
-                  // Projects
                   ProjectGrid(
                     projects: _getFilteredProjects(ProjectStatus.onHold),
                   ),
                   
-                  // Life
                   ProjectGrid(
                     projects: _getFilteredProjects(ProjectStatus.life),
                   ),
@@ -186,71 +180,6 @@ class _EventsPageState extends State<EventsPage>
           ],
         ),
       ),
-    );
-  }
-}
-
-class ProjectGrid extends StatelessWidget {
-  final List<EventProject> projects;
-
-  const ProjectGrid({
-    super.key,
-    required this.projects,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (projects.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.work_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No projects here',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Add some projects to get started',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
-        final childAspectRatio = constraints.maxWidth > 600 ? 0.8 : 0.75;
-        
-        return GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: childAspectRatio,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: projects.length,
-          itemBuilder: (context, index) {
-            final project = projects[index];
-            return ProjectCard(project: project);
-          },
-        );
-      },
     );
   }
 }

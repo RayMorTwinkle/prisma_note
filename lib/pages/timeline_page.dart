@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../models/timeline_item.dart';
 import '../widgets/sound_wave_visualizer.dart';
 import '../providers/timeline_provider.dart';
+import '../widgets/cards/timeline_item_card.dart';
+import '../widgets/sheets/search_sheet.dart';
+import '../constants/app_colors.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -45,10 +48,10 @@ class _TimelinePageState extends State<TimelinePage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.black,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              primary: AppColors.primary,
+              onPrimary: AppColors.onPrimary,
+              surface: AppColors.surface,
+              onSurface: AppColors.onSurface,
             ),
           ),
           child: child!,
@@ -74,16 +77,14 @@ class _TimelinePageState extends State<TimelinePage> {
     return Consumer<TimelineProvider>(
       builder: (context, timelineProvider, child) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.background,
           body: SafeArea(
             child: Column(
               children: [
-                // Top Bar with Date, VAD Visualizer, and Search
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      // Date Selector
                       GestureDetector(
                         onTap: _showDatePicker,
                         child: Container(
@@ -92,7 +93,7 @@ class _TimelinePageState extends State<TimelinePage> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
+                            border: Border.all(color: AppColors.grey300),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -101,7 +102,7 @@ class _TimelinePageState extends State<TimelinePage> {
                               Icon(
                                 Icons.calendar_today,
                                 size: 16,
-                                color: Colors.grey[600],
+                                color: AppColors.grey600,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -109,7 +110,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ],
@@ -117,25 +118,23 @@ class _TimelinePageState extends State<TimelinePage> {
                         ),
                       ),
                       
-                      // Sound Wave Visualizer (VAD Status)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Center(
                             child: SoundWaveVisualizer(
-                              isActive: false, // Will be controlled by recording state
+                              isActive: false,
                             ),
                           ),
                         ),
                       ),
                       
-                      // Search
                       GestureDetector(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.surface,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                             ),
@@ -153,13 +152,13 @@ class _TimelinePageState extends State<TimelinePage> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
+                            border: Border.all(color: AppColors.grey300),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
                             Icons.search,
                             size: 20,
-                            color: Colors.grey[600],
+                            color: AppColors.grey600,
                           ),
                         ),
                       ),
@@ -167,7 +166,6 @@ class _TimelinePageState extends State<TimelinePage> {
                   ),
                 ),
                 
-                // View Toggle and Search Results
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
@@ -180,13 +178,13 @@ class _TimelinePageState extends State<TimelinePage> {
                             style: GoogleFonts.inter(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(width: 16),
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: AppColors.grey100,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -200,7 +198,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: !_isDetailView ? Colors.black : null,
+                                      color: !_isDetailView ? AppColors.primary : null,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
@@ -208,7 +206,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                       style: GoogleFonts.inter(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: !_isDetailView ? Colors.white : Colors.grey[600],
+                                        color: !_isDetailView ? AppColors.onPrimary : AppColors.grey600,
                                       ),
                                     ),
                                   ),
@@ -221,7 +219,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: _isDetailView ? Colors.black : null,
+                                      color: _isDetailView ? AppColors.primary : null,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
@@ -229,7 +227,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                       style: GoogleFonts.inter(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: _isDetailView ? Colors.white : Colors.grey[600],
+                                        color: _isDetailView ? AppColors.onPrimary : AppColors.grey600,
                                       ),
                                     ),
                                   ),
@@ -245,14 +243,13 @@ class _TimelinePageState extends State<TimelinePage> {
                           '${_filteredItems.length} results',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: AppColors.grey600,
                           ),
                         ),
                     ],
                   ),
                 ),
                 
-                // Timeline List
                 Expanded(
                   child: _filteredItems.isEmpty
                       ? Center(
@@ -262,14 +259,14 @@ class _TimelinePageState extends State<TimelinePage> {
                               Icon(
                                 Icons.timeline,
                                 size: 64,
-                                color: Colors.grey[400],
+                                color: AppColors.grey400,
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 'No items for this date',
                                 style: GoogleFonts.inter(
                                   fontSize: 16,
-                                  color: Colors.grey[600],
+                                  color: AppColors.grey600,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -277,7 +274,7 @@ class _TimelinePageState extends State<TimelinePage> {
                                 'Try a different date or add some items',
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
-                                  color: Colors.grey[500],
+                                  color: AppColors.grey500,
                                 ),
                               ),
                             ],
@@ -300,235 +297,6 @@ class _TimelinePageState extends State<TimelinePage> {
           ),
         );
       },
-    );
-  }
-}
-
-class TimelineItemCard extends StatelessWidget {
-  final TimelineItem item;
-  final bool isDetailView;
-
-  const TimelineItemCard({
-    super.key,
-    required this.item,
-    required this.isDetailView,
-  });
-
-  String get _formattedTime {
-    final now = DateTime.now();
-    final difference = now.difference(item.timestamp);
-    
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else {
-      return '${difference.inDays}d ago';
-    }
-  }
-
-  IconData get _typeIcon {
-    switch (item.type) {
-      case TimelineType.meeting:
-        return Icons.group;
-      case TimelineType.event:
-        return Icons.event;
-      case TimelineType.task:
-        return Icons.check_circle;
-      case TimelineType.voiceMemo:
-        return Icons.mic;
-      case TimelineType.note:
-        return Icons.note;
-      case TimelineType.reminder:
-        return Icons.alarm;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header: Time and Type
-            Row(
-              children: [
-                Text(
-                  _formattedTime,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  _typeIcon,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const Spacer(),
-                if (item.isFavorite)
-                  Icon(
-                    Icons.star,
-                    size: 16,
-                    color: Colors.amber[600],
-                  ),
-              ],
-            ),
-            
-            const SizedBox(height: 8),
-            
-            // Title
-            Text(
-              item.title,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-            
-            // Detail View Additional Content
-            if (isDetailView) ...[
-              if (item.summary != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  item.summary!,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                    height: 1.4,
-                  ),
-                ),
-              ],
-              
-              if (item.participants.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.people,
-                      size: 14,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        item.participants.join(', '),
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              
-              if (item.generatedToDos.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.checklist,
-                            size: 14,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Generated ToDos',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      ...item.generatedToDos.map(
-                        (todo) => Padding(
-                          padding: const EdgeInsets.only(left: 22, bottom: 2),
-                          child: Text(
-                            '• $todo',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SearchSheet extends StatelessWidget {
-  final TextEditingController controller;
-  final Function(String) onSearch;
-
-  const SearchSheet({
-    super.key,
-    required this.controller,
-    required this.onSearch,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-        left: 20,
-        right: 20,
-        top: 20,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: 'Search timeline...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onSubmitted: onSearch,
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
     );
   }
 }

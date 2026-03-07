@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prisma_note/models/event_project.dart';
+import '../models/event_project.dart';
+import '../constants/app_colors.dart';
+import '../utils/date_utils.dart';
 
 class ProjectCard extends StatelessWidget {
   final EventProject project;
@@ -13,30 +15,30 @@ class ProjectCard extends StatelessWidget {
   Color _getPriorityColor(String? priority) {
     switch (priority) {
       case 'high':
-        return Colors.red[400]!;
+        return AppColors.red400;
       case 'medium':
-        return Colors.orange[400]!;
+        return AppColors.orange400;
       case 'low':
-        return Colors.green[400]!;
+        return AppColors.green400;
       default:
-        return Colors.grey[400]!;
+        return AppColors.grey400;
     }
   }
 
   Color _getStatusColor(ProjectStatus status) {
     switch (status) {
       case ProjectStatus.inProgress:
-        return Colors.blue[400]!;
+        return AppColors.blue400;
       case ProjectStatus.completed:
-        return Colors.green[400]!;
+        return AppColors.green400;
       case ProjectStatus.onHold:
-        return Colors.orange[400]!;
+        return AppColors.orange400;
       case ProjectStatus.cancelled:
-        return Colors.red[400]!;
+        return AppColors.red400;
       case ProjectStatus.backlog:
-        return Colors.grey[400]!;
+        return AppColors.grey400;
       case ProjectStatus.life:
-        return Colors.purple[400]!;
+        return AppColors.purple400;
     }
   }
 
@@ -60,7 +62,6 @@ class ProjectCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header: Title and Priority
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -70,7 +71,7 @@ class ProjectCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: AppColors.primary,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -92,7 +93,6 @@ class ProjectCard extends StatelessWidget {
             
             const SizedBox(height: 8),
             
-            // Status Badge
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -118,7 +118,6 @@ class ProjectCard extends StatelessWidget {
             
             const SizedBox(height: 12),
             
-            // Progress Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -130,14 +129,14 @@ class ProjectCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                        color: AppColors.primary,
                       ),
                     ),
                     Text(
                       _getProgressLabel(project.progress),
                       style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: Colors.grey[600],
+                        color: AppColors.grey600,
                       ),
                     ),
                   ],
@@ -145,7 +144,7 @@ class ProjectCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 LinearProgressIndicator(
                   value: project.progress,
-                  backgroundColor: Colors.grey[200],
+                  backgroundColor: AppColors.grey200,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getStatusColor(project.status),
                   ),
@@ -155,20 +154,18 @@ class ProjectCard extends StatelessWidget {
             
             const SizedBox(height: 12),
             
-            // Description
             if (project.description.isNotEmpty)
               Text(
                 project.description,
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: AppColors.grey600,
                   height: 1.3,
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
             
-            // Due Date
             if (project.dueDate != null) ...[
               const SizedBox(height: 8),
               Row(
@@ -176,14 +173,14 @@ class ProjectCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today,
                     size: 12,
-                    color: Colors.grey[500],
+                    color: AppColors.grey500,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Due: ${_formatDate(project.dueDate!)}',
+                    'Due: ${AppDateUtils.formatDate(project.dueDate!)}',
                     style: GoogleFonts.inter(
                       fontSize: 11,
-                      color: Colors.grey[600],
+                      color: AppColors.grey600,
                     ),
                   ),
                 ],
@@ -192,10 +189,8 @@ class ProjectCard extends StatelessWidget {
             
             const Spacer(),
             
-            // Tags and Metrics
             Column(
               children: [
-                // Tags
                 if (project.tags.isNotEmpty) ...[
                   Wrap(
                     spacing: 4,
@@ -207,14 +202,14 @@ class ProjectCard extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: AppColors.grey100,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           tag,
                           style: GoogleFonts.inter(
                             fontSize: 10,
-                            color: Colors.grey[700],
+                            color: AppColors.grey700,
                           ),
                         ),
                       );
@@ -223,7 +218,6 @@ class ProjectCard extends StatelessWidget {
                   const SizedBox(height: 8),
                 ],
                 
-                // Metrics/Stats
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -258,44 +252,25 @@ class ProjectCard extends StatelessWidget {
         Icon(
           icon,
           size: 12,
-          color: Colors.grey[600],
+          color: AppColors.grey600,
         ),
         const SizedBox(width: 4),
         Text(
           '$label: $value',
           style: GoogleFonts.inter(
             fontSize: 10,
-            color: Colors.grey[600],
+            color: AppColors.grey600,
           ),
         ),
       ],
     );
   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = date.difference(now);
-    
-    if (difference.inDays < 0) {
-      return 'Overdue';
-    } else if (difference.inDays == 0) {
-      return 'Today';
-    } else if (difference.inDays == 1) {
-      return 'Tomorrow';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d';
-    } else {
-      return '${date.day}/${date.month}';
-    }
-  }
-
   int _generateTaskCount() {
-    // Simulate task count based on progress
     return (5 + (project.progress * 20)).round();
   }
 
   int _generateScheduleCount() {
-    // Simulate schedule count based on project age
     final daysSinceCreated = DateTime.now().difference(project.createdAt).inDays;
     return (daysSinceCreated / 7).round();
   }
